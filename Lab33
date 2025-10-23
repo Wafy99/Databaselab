@@ -1,0 +1,82 @@
+create database store;
+
+CREATE TABLE Customer(
+
+CustomerID INT Identity(1,1)NOT NULL,
+CustFirstName VARCHAR(30),
+CustLastName VARCHAR(30),
+CustomerDOB varchar(30),
+CustomerPhone VARCHAR(30),
+CustomerAddress VARCHAR(30),
+
+CONSTRAINT Customer_pk PRIMARY KEY (CustomerID)
+);
+
+CREATE TABLE Orderr(
+
+OrderID INT Identity(1,1)NOT NULL,
+CID INT Identity(1,1)NOT NULL,
+DateOFOrder VARCHAR(30),
+OrderStatus varchar(30),
+
+CONSTRAINT Order_pk PRIMARY KEY (OrderID),
+CONSTRAINT Customer_Order_fk FOREIGN KEY (CID) REFERENCES Customer (CustomerID)
+);
+
+CREATE TABLE Product(
+PID INT Identity(1,1) NOT NULL,
+PName VARCHAR(30),
+PDescription VARCHAR(100),
+
+CONSTRAINT Product_pk PRIMARY KEY (PID)
+);
+
+CREATE TABLE Order_Details(
+OrderID INT Identity(1,1) NOT NULL,
+ProductID INT Identity(1,1) NOT NULL,
+Quantity INT,
+
+CONSTRAINT Orderdetails_pk PRIMARY KEY (OrderID, ProductID),
+CONSTRAINT Order_Product_fk FOREIGN KEY (OrderID) REFERENCES Orderr (OrderID),
+CONSTRAINT Product_Order_fk FOREIGN KEY (ProductID) REFERENCES Product (PID)
+);
+
+INSERT INTO Customer VALUES('1', 'Mark', 'Smith', '26/01/1993', '01001589678', 'New Cairo');
+INSERT INTO Customer VALUES('2', 'Marhia' , 'John', '14/05/1990', '05454784328', 'Montana');
+INSERT INTO Customer VALUES('3', 'Steven', 'Branden', '18/12/1960', '021654125845', 'New Jersy');
+
+INSERT INTO Orderr VALUES('101', '1', '26/7/2019', 'Delivered');
+INSERT INTO Orderr VALUES('102', '2', '26/8/2019', 'Delivered');
+INSERT INTO Orderr VALUES('103', '3', '26/9/2019', 'NotDelivered');
+
+INSERT INTO Product VALUES('201', 'TV', 'Smart TV');
+INSERT INTO Product VALUES('202', 'Camera', 'Sony Camera');
+INSERT INTO Product VALUES('203', 'Mobile','Iphone11');
+
+INSERT INTO Order_details VALUES('101', '201', '10');
+INSERT INTO Order_details VALUES('102', '202', '5');
+INSERT INTO Order_details VALUES('103', '203', '15');
+
+
+
+
+CREATE INDEX IDX_CustomerID ON Customer(CustomerID);
+
+CREATE INDEX IDX_CustomerFullNameDOB_ID
+ON Customer(CustFirstName, CustLastName, CustomerDOB, CustomerID, CustomerPhone, CustomerAddress);
+
+CREATE INDEX IDX_ProductNameDesc
+ON Product(PName, PDescription, PID);
+
+CREATE INDEX IDX_OrderProduct
+ON Order_Details(OrderID, ProductID, Quantity);
+
+SHOW INDEXES FROM Customer;
+
+ALTER TABLE Customer RENAME INDEX IDX_CustomerID TO IDX_Customer_ID;
+
+DROP INDEX IDX_Customer_ID ON Customer;
+
+ALTER TABLE Product ALTER INDEX IDX_ProductNameDesc INVISIBLE;
+
+ALTER TABLE Product ALTER INDEX IDX_ProductNameDesc VISIBLE;
